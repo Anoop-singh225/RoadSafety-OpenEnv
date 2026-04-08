@@ -6,13 +6,10 @@ from models import RiderSafetyAction, RiderSafetyObservation
 from client import RiderSafetyClient 
 
 # 1. Configuration
-# The validator requires using API_BASE_URL and API_KEY environment variables.
-API_BASE_URL = os.getenv("API_BASE_URL")
-API_KEY = os.getenv("API_KEY")
-MODEL_NAME = os.getenv("MODEL_NAME", "meta-llama/Meta-Llama-3-8B-Instruct")
-
-if not API_BASE_URL or not API_KEY:
-    print("Warning: API_BASE_URL or API_KEY is not set. Inference might fail.")
+# The validator requires using API_BASE_URL and API_KEY environment variables exactly.
+API_BASE_URL = os.environ.get("API_BASE_URL")
+API_KEY = os.environ.get("API_KEY")
+MODEL_NAME = os.environ.get("MODEL_NAME", "meta-llama/Meta-Llama-3-8B-Instruct")
 
 client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
 
@@ -97,7 +94,7 @@ async def run_task(env: RiderSafetyClient, task_name: str):
         log_end(success_flag, steps, score, rewards)
 
 async def main():
-    env = RiderSafetyClient("http://localhost:8000")
+    env = RiderSafetyClient("http://localhost:7860")
     for task in ["easy", "medium", "hard"]:
         await run_task(env, task)
         print("-" * 50)
