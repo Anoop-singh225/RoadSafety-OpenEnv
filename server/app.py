@@ -1,4 +1,4 @@
-﻿from openenv.core.env_server import create_fastapi_app
+from openenv.core.env_server import create_fastapi_app
 from .environment import RiderSafetyEnv
 from models import RiderSafetyAction, RiderSafetyObservation
 
@@ -9,6 +9,9 @@ app = create_fastapi_app(
     observation_cls=RiderSafetyObservation
 )
 
-if __name__ == "__main__":
+def main():
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+if __name__ == "__main__":
+    main()
