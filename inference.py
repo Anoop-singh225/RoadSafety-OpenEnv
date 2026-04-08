@@ -8,7 +8,7 @@ from client import RiderSafetyClient
 # 1. Configuration
 API_BASE_URL = os.getenv("API_BASE_URL", "https://api-inference.huggingface.co/v1/")
 MODEL_NAME = os.getenv("MODEL_NAME", "meta-llama/Meta-Llama-3-8B-Instruct")
-HF_TOKEN = os.getenv("HF_TOKEN", "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")
+HF_TOKEN = os.getenv("HF_TOKEN")
 
 client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
 
