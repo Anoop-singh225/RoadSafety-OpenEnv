@@ -1,0 +1,15 @@
+name: rider-safety-env
+version: "0.1.0"
+description: "Road safety monitoring environment for RL training."
+entrypoint: "server.app:app"
+
+tasks:
+  - id: "easy"
+    name: "Identify Clear Crash"
+    description: "Agent must identify an obvious high-intensity crash vs perfectly normal driving."
+  - id: "medium"
+    name: "Anomaly Monitoring"
+    description: "Agent must distinguish between high variance normal driving and borderline crashes."
+  - id: "hard"
+    name: "Emergency Dispatch"
+    description: "Agent must handle tricky edge cases with minimal false alarms."
