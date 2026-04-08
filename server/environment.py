@@ -96,26 +96,36 @@ class RiderSafetyEnv(Environment):
         is_false_alarm = not self._state.crash_occurred and self._state.sos_dispatched
         is_false_negative = self._state.crash_occurred and not self._state.sos_dispatched
 
+        score = 0.0
         if self._state.task_name == "easy":
             # Simple binary grading
-            if is_true_positive or is_true_negative: return 1.0
-            else: return 0.0
+            if is_true_positive or is_true_negative: score = 1.0
+            else: score = 0.0
             
         elif self._state.task_name == "medium":
             # Partial rewards
-            if is_true_positive: return 1.0
-            elif is_true_negative: return 1.0
-            elif is_false_alarm: return 0.2  # Erring on side of safety
-            elif is_false_negative: return 0.0
+            if is_true_positive: score = 1.0
+            elif is_true_negative: score = 1.0
+            elif is_false_alarm: score = 0.2  # Erring on side of safety
+            else: score = 0.0
                 
-        else: # rule: task_name == "hard"
-            # Strict grading: penalize false alarms heavily, require perfect response
-            if is_true_positive: return 1.0
-            elif is_true_negative: return 1.0
-            elif is_false_alarm: return 0.0 
-            elif is_false_negative: return 0.0
-            
-        return 0.0
+        else: # Hard Task
+            if is_true_positive:
+                score = 1.0
+            elif is_true_negative:
+                score = 1.0
+            elif is_false_alarm:
+                score = 0.0  # Explicitly penalizing False Alarms
+            else:
+                score = 0.0
+        
+        # Meta Hackathon Validator requires scores strictly in (0, 1)
+        return max(0.001, min(0.999, score))
+
+        
+        # IMPORTANT: Meta Hackathon Validator requires scores strictly between 0 and 1
+        # (not exactly 0.0 and not exactly 1.0)
+        return max(0.001, min(0.999, score))
 
     def _create_observation(self, row: Dict[str, Any], reward: float, done: bool) -> RiderSafetyObservation:
         # Generate contextual transcript
