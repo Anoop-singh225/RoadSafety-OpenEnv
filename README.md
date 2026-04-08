@@ -1,3 +1,11 @@
+---
+title: RoadSafety OpenEnv
+emoji: 🏍️
+colorFrom: blue
+colorTo: red
+sdk: docker
+pinned: false
+---
 # Road Safety OpenEnv
 
 This is a fully compliant OpenEnv project modeling a real-world task: AI-driven autonomous crash detection and emergency response system.
@@ -37,7 +45,7 @@ This environment includes a completed `inference.py` ready to benchmark LLMs.
 # Set specific credentials or use environment defaults
 export API_BASE_URL="https://api.together.xyz/v1"
 export MODEL_NAME="meta-llama/Llama-3-8b-chat-hf"
-export HF_TOKEN="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"
+export HF_TOKEN="HF_TOKEN"
 
 # Run inference
 python inference.py
