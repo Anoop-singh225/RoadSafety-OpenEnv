@@ -63,7 +63,7 @@ class RiderSafetyEnv(Environment):
         self._state.crash_occurred = any(row.get('Crash_Label', 0) == 1 for row in self._sequence)
 
         first_obs = self._sequence[0]
-        return self._create_observation(first_obs, 0.0, False)
+        return self._create_observation(first_obs, 0.01, False)
 
     def step(self, action: RiderSafetyAction) -> RiderSafetyObservation:
         self._step_count += 1
