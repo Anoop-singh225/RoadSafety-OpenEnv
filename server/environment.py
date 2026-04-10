@@ -73,8 +73,8 @@ class RiderSafetyEnv(Environment):
             
         done = self._step_count >= self._state.max_turns
         
-        # Calculate rewards based on Graders criteria (task specific)
-        reward = 0.0
+        # Default reward should NOT be 0.0 for the validator
+        reward = 0.01
         if done:
             reward = self._grade_task()
 
@@ -86,46 +86,25 @@ class RiderSafetyEnv(Environment):
 
     def _grade_task(self) -> float:
         # Grading logic maps directly to openenv grader requirements (0.0 to 1.0)
-        # Easy: correct binary response string
-        # Medium: partial progress (if model monitors until dispatch is necessary, gets full, otherwise penalised)
-        # Hard: High penalty for false alarms
-        
-        # Baseline True Positive vs False Alarm
         is_true_positive = self._state.crash_occurred and self._state.sos_dispatched
         is_true_negative = not self._state.crash_occurred and not self._state.sos_dispatched
         is_false_alarm = not self._state.crash_occurred and self._state.sos_dispatched
-        is_false_negative = self._state.crash_occurred and not self._state.sos_dispatched
 
         score = 0.0
         if self._state.task_name == "easy":
-            # Simple binary grading
             if is_true_positive or is_true_negative: score = 1.0
             else: score = 0.0
-            
         elif self._state.task_name == "medium":
-            # Partial rewards
-            if is_true_positive: score = 1.0
-            elif is_true_negative: score = 1.0
-            elif is_false_alarm: score = 0.2  # Erring on side of safety
+            if is_true_positive or is_true_negative: score = 1.0
+            elif is_false_alarm: score = 0.2
             else: score = 0.0
-                
         else: # Hard Task
-            if is_true_positive:
-                score = 1.0
-            elif is_true_negative:
-                score = 1.0
-            elif is_false_alarm:
-                score = 0.0  # Explicitly penalizing False Alarms
-            else:
-                score = 0.0
+            if is_true_positive or is_true_negative: score = 1.0
+            else: score = 0.0
         
         # Meta Hackathon Validator requires scores strictly in (0, 1)
-        return max(0.001, min(0.999, score))
-
-        
-        # IMPORTANT: Meta Hackathon Validator requires scores strictly between 0 and 1
-        # (not exactly 0.0 and not exactly 1.0)
-        return max(0.001, min(0.999, score))
+        # 0.99 for success and 0.01 for failure.
+        return max(0.01, min(0.99, score))
 
     def _create_observation(self, row: Dict[str, Any], reward: float, done: bool) -> RiderSafetyObservation:
         # Generate contextual transcript
